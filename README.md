@@ -6,7 +6,7 @@ Testing Reinforcement Learning Algorithms
 ```bash
 conda env create -f environment.yml
 conda activate rllib
-nohup ./run.sh &
+nohup time ./run.sh &> run.out &
 ```
 ## Dev Guide
 ```bash
