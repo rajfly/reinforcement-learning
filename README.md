@@ -6,7 +6,11 @@ Testing Reinforcement Learning Algorithms
 ```bash
 conda env create -f environment.yml
 conda activate rllib
+```
+### Start Training
+```bash
 nohup time ./run.sh &> run.out &
+nvidia-smi | grep 'ray' | awk '{print $5}' | xargs -n1 kill -9
 ```
 ## Dev Guide
 ```bash
@@ -15,7 +19,4 @@ conda install pytorch torchvision torchaudio pytorch-cuda=11.6 -c pytorch -c nvi
 pip install "ray[rllib]" pygame
 conda install tensorflow=2.10.0
 conda env export --no-builds > environment.yml
-```
-```bash
-nvidia-smi | grep 'ray' | awk '{print $5}' | xargs -n1 kill -9
 ```
