@@ -16,3 +16,6 @@ pip install "ray[rllib]" pygame
 conda install tensorflow=2.10.0
 conda env export --no-builds > environment.yml
 ```
+```bash
+nvidia-smi | grep 'ray' | awk '{print $5}' | xargs -n1 kill -9
+```
