@@ -9,7 +9,7 @@ dqn:
   config:
     num_gpus: 1
     num_workers: 15
-    num_envs_per_worker: 200
+    num_envs_per_worker: 100
     framework:
       grid_search:
         - tf
