@@ -2,14 +2,14 @@ dqn:
   env: CartPole-v1
   run: DQN
   stop:
-    timesteps_total: 300000000
+    timesteps_total: 25000000
   checkpoint_config:
     checkpoint_at_end: true
   local_dir: ~/projects/reinforcement-learning
   config:
     num_gpus: 1
     num_workers: 15
-    num_envs_per_worker: 100
+    num_envs_per_worker: 5
     framework:
       grid_search:
         - tf
