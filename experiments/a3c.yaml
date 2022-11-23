@@ -1,11 +1,6 @@
-cartpole:
+a3c:
   env: CartPole-v1
-  run:
-    grid_search:
-      - DQN
-      - A2C
-      - A3C
-      - PPO
+  run: A3C
   stop:
     timesteps_total: 300000000
   checkpoint_config:
