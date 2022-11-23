@@ -9,7 +9,7 @@ conda activate rllib
 ```
 ### Start Training
 ```bash
-nohup ./run.sh &> run.out &
+nohup rllib train -f experiments/dqn.yaml &
 nvidia-smi | grep 'ray' | awk '{print $5}' | xargs -n1 kill -9
 ```
 ## Dev Guide
