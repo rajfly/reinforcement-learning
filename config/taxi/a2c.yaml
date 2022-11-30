@@ -1,11 +1,11 @@
-ppo:
-  env: BreakoutNoFrameskip-v4
-  run: PPO
+a2c:
+  env: Taxi-v3
+  run: A2C
   stop:
     timesteps_total: 25000000
   checkpoint_config:
     checkpoint_at_end: true
-  local_dir: ~/projects/reinforcement-learning/breakout
+  local_dir: ~/projects/reinforcement-learning/taxi
   config:
     num_gpus: 1
     num_workers: 15
