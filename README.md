@@ -18,14 +18,48 @@ conda install pytorch torchvision torchaudio pytorch-cuda=11.6 -c pytorch -c nvi
 conda install tensorflow=2.10.0
 ```
 
+### Configure Training
+```yaml
+# required fields to modify: local_dir, num_gpus, num_workers
+# local_dir: modify '~/projects/' to point to the directory where this repo is located
+# num_gpus: number of gpus to allocate to each framework
+#           set to 0 for cpu
+#           total gpus used is 4 in the example below
+# num_workers: number additional workers to allocate to each framework 
+#              the framework already has one worker by default
+#              each worker uses 1 cpu by default
+#              with 15 additional workers, total cpus used is (15 + 1) * 4 the example below
+a2c:
+  env: CartPole-v1
+  run: A2C
+  stop:
+    timesteps_total: 25000000
+  checkpoint_config:
+    checkpoint_at_end: true
+  local_dir: ~/projects/reinforcement-learning/cartpole
+  config:
+    num_gpus: 1
+    num_workers: 15
+    num_envs_per_worker: 5
+    framework:
+      grid_search:
+        - tf
+        - tfe
+        - tf2
+        - torch
+```
+
 ### Start Training
 ```bash
+# see nohup.out for train output
 nohup rllib train -f config/cartpole/a2c.yaml &
 ```
 
-## Dev Commands
+## Dev Utility Commands
 ```bash
+# create and export conda env
 conda env create -f environment.yml
 conda env export --no-builds > environment.yml
+# kill all gpu processes
 nvidia-smi | grep 'ray' | awk '{print $5}' | xargs -n1 kill -9
 ```
