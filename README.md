@@ -60,6 +60,7 @@ nohup rllib train -f config/cartpole/a2c.yaml &
 # create and export conda env
 conda env create -f environment.yml
 conda env export --no-builds > environment.yml
+
 # kill all gpu processes
 nvidia-smi | grep 'ray' | awk '{print $5}' | xargs -n1 kill -9
 ```
