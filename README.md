@@ -55,7 +55,7 @@ a2c:
 nohup rllib train -f config/cartpole/a2c.yaml &
 ```
 
-# View Training Graphs
+### View Training Graphs
 ```bash
 tensorboard --logdir=cartpole 
 ```
