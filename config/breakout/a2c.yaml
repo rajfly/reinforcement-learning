@@ -1,0 +1,19 @@
+a2c:
+  env: BreakoutNoFrameskip-v4
+  run: A2C
+  stop:
+    timesteps_total: 25000000
+  checkpoint_config:
+    checkpoint_at_end: true
+  local_dir: ~/projects/reinforcement-learning/breakout
+  config:
+    num_gpus: 1
+    num_workers: 15
+    num_envs_per_worker: 5
+    eager_tracing: true
+    framework:
+      grid_search:
+        - tf
+        - tfe
+        - tf2
+        - torch
