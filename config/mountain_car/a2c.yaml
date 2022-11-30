@@ -1,11 +1,11 @@
 a2c:
-  env: ALE/Pong-v5
+  env: MountainCar-v0
   run: A2C
   stop:
     timesteps_total: 25000000
   checkpoint_config:
     checkpoint_at_end: true
-  local_dir: ~/projects/reinforcement-learning/pong
+  local_dir: ~/projects/reinforcement-learning/mountain_car
   config:
     num_gpus: 1
     num_workers: 15
