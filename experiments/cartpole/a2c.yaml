@@ -1,11 +1,11 @@
-a3c:
+a2c:
   env: CartPole-v1
-  run: A3C
+  run: A2C
   stop:
     timesteps_total: 25000000
   checkpoint_config:
     checkpoint_at_end: true
-  local_dir: ~/projects/reinforcement-learning
+  local_dir: ~/projects/reinforcement-learning/cartpole
   config:
     num_gpus: 1
     num_workers: 15
