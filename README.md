@@ -55,6 +55,11 @@ a2c:
 nohup rllib train -f config/cartpole/a2c.yaml &
 ```
 
+# View Training Graphs
+```bash
+tensorboard --logdir=cartpole 
+```
+
 ## Dev Utility Commands
 ```bash
 # create and export conda env
