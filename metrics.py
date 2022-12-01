@@ -63,7 +63,7 @@ if __name__ == '__main__':
     tf2_cvar_diff_rankings = []
     torch_cvar_diff_rankings = []
 
-    for exp in ['a2c', 'apex', 'dqn', 'impala', 'ppo', 'appo', 'ars', 'pg']:
+    for exp in ['a2c', 'apex', 'dqn', 'impala', 'ppo', 'appo', 'pg']:
         exp_iqr_val = []
         exp_cvar_diff_val = []
         exp_path = 'cartpole/' + exp
