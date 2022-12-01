@@ -63,7 +63,7 @@ if __name__ == '__main__':
     tf2_cvar_diff_rankings = []
     torch_cvar_diff_rankings = []
 
-    for exp in ['a2c', 'apex', 'dqn', 'impala', 'ppo']:
+    for exp in ['a2c', 'apex', 'dqn', 'impala', 'ppo', 'appo', 'ars', 'pg']:
         exp_iqr_val = []
         exp_cvar_diff_val = []
         exp_path = 'cartpole/' + exp
@@ -74,14 +74,10 @@ if __name__ == '__main__':
                 elif '=tfe_' in data_path: framework = 'tfe'
                 elif '=tf_' in data_path: framework = 'tf'
                 elif '=torch_' in data_path: framework = 'torch'
-                # print('--------------- ' + exp + ' ' + framework + ' ---------------')
                 episode_rewards = get_episode_rewards(data_path)
                 iqr_val = get_iqr(np.copy(episode_rewards), True, 32)
                 cvar_diff = get_cvar(np.copy(episode_rewards), 0.05, True, False)
                 cvar_draw = get_cvar(np.copy(episode_rewards), 0.05, False, True)
-                # print('IQR:', iqr_val)
-                # print('CVAR (diff):', cvar_diff)
-                # print('CVAR (draw):', cvar_draw)
                 exp_iqr_val.append((iqr_val, framework))
                 exp_cvar_diff_val.append((cvar_diff, framework))
         exp_iqr_val.sort(key=lambda x:x[0])
