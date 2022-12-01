@@ -10,6 +10,7 @@ ppo:
     num_gpus: 1
     num_workers: 15
     num_envs_per_worker: 5
+    eager_tracing: true
     framework:
       grid_search:
         - tf
