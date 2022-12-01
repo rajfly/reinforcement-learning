@@ -1,0 +1,19 @@
+sac:
+  env: CartPole-v1
+  run: SAC
+  stop:
+    timesteps_total: 10000000
+  checkpoint_config:
+    checkpoint_at_end: true
+  local_dir: ~/projects/reinforcement-learning/cartpole
+  config:
+    num_gpus: 1
+    num_workers: 5
+    num_envs_per_worker: 5
+    eager_tracing: true
+    framework:
+      grid_search:
+        - tf
+        - tfe
+        - tf2
+        - torch
