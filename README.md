@@ -28,19 +28,20 @@ conda install tensorflow=2.10.0
 # num_workers: number additional workers to allocate to each framework 
 #              the framework already has one worker by default
 #              each worker uses 1 cpu by default
-#              with 15 additional workers, total cpus used is (15 + 1) * 4 the example below
+#              with 5 additional workers, total cpus used is (5 + 1) * 4 the example below
 a2c:
   env: CartPole-v1
   run: A2C
   stop:
-    timesteps_total: 25000000
+    timesteps_total: 10000000
   checkpoint_config:
     checkpoint_at_end: true
   local_dir: ~/projects/reinforcement-learning/cartpole
   config:
     num_gpus: 1
-    num_workers: 15
+    num_workers: 5
     num_envs_per_worker: 5
+    eager_tracing: true
     framework:
       grid_search:
         - tf
