@@ -16,6 +16,7 @@ pip install tensorflow torch
 # see tensorflow and pytorch websites and install based on your cuda version
 conda install pytorch torchvision torchaudio pytorch-cuda=11.6 -c pytorch -c nvidia
 conda install tensorflow=2.10.0
+pip install tensorflow-probability
 ```
 
 ### Configure Training
