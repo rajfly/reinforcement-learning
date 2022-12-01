@@ -85,14 +85,14 @@ if __name__ == '__main__':
                 exp_iqr_val.append((iqr_val, framework))
                 exp_cvar_diff_val.append((cvar_diff, framework))
         exp_iqr_val.sort(key=lambda x:x[0])
-        exp_cvar_diff_val.sort(key=lambda x:x[0])
+        exp_cvar_diff_val.sort(key=lambda x:x[0], reverse=True)
         for idx, x in enumerate(exp_iqr_val):
             if x[1] == 'tf2': tf2_iqr_rankings.append(idx+1)
             elif x[1] == 'tfe': tfe_iqr_rankings.append(idx+1)
             elif x[1] == 'tf': tf_iqr_rankings.append(idx+1)
             elif x[1] == 'torch': torch_iqr_rankings.append(idx+1)
 
-        for idx, x in reversed(list(enumerate(exp_cvar_diff_val))):
+        for idx, x in enumerate(exp_cvar_diff_val):
             if x[1] == 'tf2': tf2_cvar_diff_rankings.append(idx+1)
             elif x[1] == 'tfe': tfe_cvar_diff_rankings.append(idx+1)
             elif x[1] == 'tf': tf_cvar_diff_rankings.append(idx+1)
