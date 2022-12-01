@@ -67,6 +67,8 @@ if __name__ == '__main__':
         exp_iqr_val = []
         exp_cvar_diff_val = []
         exp_path = 'cartpole/' + exp
+
+        # get data from training files and calculate iqr, cvar
         for (root, dirs, files) in os.walk(exp_path):
             if 'checkpoint' not in root and exp.upper() in root:
                 data_path = root + '/progress.csv'
@@ -80,6 +82,8 @@ if __name__ == '__main__':
                 cvar_draw = get_cvar(np.copy(episode_rewards), 0.05, False, True)
                 exp_iqr_val.append((iqr_val, framework))
                 exp_cvar_diff_val.append((cvar_diff, framework))
+        
+        # calculate rankings for iqr and cvar
         exp_iqr_val.sort(key=lambda x:x[0])
         exp_cvar_diff_val.sort(key=lambda x:x[0], reverse=True)
         for idx, x in enumerate(exp_iqr_val):
