@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 from ast import literal_eval
 from scipy.stats import iqr, scoreatpercentile
+import matplotlib.pyplot as plt
 
 # returns rewards from all episodes for a particular training run
 def get_episode_rewards(path):
@@ -52,7 +53,19 @@ def get_cvar(arr, alpha=0.05, differences=False, drawdown=False):
     return cvar
 
 if __name__ == '__main__':
-    for exp in ['a2c', 'apex', 'dqn', 'impala']:
+    tf_iqr_rankings = []
+    tfe_iqr_rankings = []
+    tf2_iqr_rankings = []
+    torch_iqr_rankings = []
+
+    tf_cvar_diff_rankings = []
+    tfe_cvar_diff_rankings = []
+    tf2_cvar_diff_rankings = []
+    torch_cvar_diff_rankings = []
+
+    for exp in ['a2c', 'apex', 'dqn', 'impala', 'ppo']:
+        exp_iqr_val = []
+        exp_cvar_diff_val = []
         exp_path = 'cartpole/' + exp
         for (root, dirs, files) in os.walk(exp_path):
             if 'checkpoint' not in root and exp.upper() in root:
@@ -61,11 +74,60 @@ if __name__ == '__main__':
                 elif '=tfe_' in data_path: framework = 'tfe'
                 elif '=tf_' in data_path: framework = 'tf'
                 elif '=torch_' in data_path: framework = 'torch'
-                print('--------------- ' + exp + ' ' + framework + ' ---------------')
+                # print('--------------- ' + exp + ' ' + framework + ' ---------------')
                 episode_rewards = get_episode_rewards(data_path)
                 iqr_val = get_iqr(np.copy(episode_rewards), True, 32)
                 cvar_diff = get_cvar(np.copy(episode_rewards), 0.05, True, False)
                 cvar_draw = get_cvar(np.copy(episode_rewards), 0.05, False, True)
-                print('IQR:', iqr_val)
-                print('CVAR (diff):', cvar_diff)
-                print('CVAR (draw):', cvar_draw)
+                # print('IQR:', iqr_val)
+                # print('CVAR (diff):', cvar_diff)
+                # print('CVAR (draw):', cvar_draw)
+                exp_iqr_val.append((iqr_val, framework))
+                exp_cvar_diff_val.append((cvar_diff, framework))
+        exp_iqr_val.sort(key=lambda x:x[0])
+        exp_cvar_diff_val.sort(key=lambda x:x[0])
+        for idx, x in enumerate(exp_iqr_val):
+            if x[1] == 'tf2': tf2_iqr_rankings.append(idx+1)
+            elif x[1] == 'tfe': tfe_iqr_rankings.append(idx+1)
+            elif x[1] == 'tf': tf_iqr_rankings.append(idx+1)
+            elif x[1] == 'torch': torch_iqr_rankings.append(idx+1)
+
+        for idx, x in reversed(list(enumerate(exp_cvar_diff_val))):
+            if x[1] == 'tf2': tf2_cvar_diff_rankings.append(idx+1)
+            elif x[1] == 'tfe': tfe_cvar_diff_rankings.append(idx+1)
+            elif x[1] == 'tf': tf_cvar_diff_rankings.append(idx+1)
+            elif x[1] == 'torch': torch_cvar_diff_rankings.append(idx+1)
+
+    # plot iqr figure
+    iqr_fig_data = {
+        'TF': np.mean(tf_iqr_rankings),
+        'TFE': np.mean(tfe_iqr_rankings),
+        'TF2': np.mean(tf2_iqr_rankings),
+        'TORCH': np.mean(torch_iqr_rankings)}
+    
+    plt.bar(
+        list(iqr_fig_data.keys()),
+        list(iqr_fig_data.values()),
+        color=('#8e98a3', '#12b5cb', '#e52592', '#f9ab00'))
+    
+    plt.ylabel('Mean Rank')
+    plt.title('Dispersion Across Time')
+    plt.savefig('figures/iqr.png', format='png', bbox_inches="tight")
+    plt.clf()
+
+    # plot cvar (diff) figure
+    cvar_diff_fig_data = {
+        'TF': np.mean(tf_cvar_diff_rankings),
+        'TFE': np.mean(tfe_cvar_diff_rankings),
+        'TF2': np.mean(tf2_cvar_diff_rankings),
+        'TORCH': np.mean(torch_cvar_diff_rankings)}
+    
+    plt.bar(
+        list(cvar_diff_fig_data.keys()),
+        list(cvar_diff_fig_data.values()),
+        color=('#8e98a3', '#12b5cb', '#e52592', '#f9ab00'))
+    
+    plt.ylabel('Mean Rank')
+    plt.title('Short Term Risk Across Time')
+    plt.savefig('figures/cvar_diff.png', format='png', bbox_inches="tight")
+    plt.clf()
