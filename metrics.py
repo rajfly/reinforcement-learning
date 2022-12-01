@@ -1,4 +1,4 @@
-import sys
+import os
 import numpy as np
 import pandas as pd
 from ast import literal_eval
@@ -52,11 +52,20 @@ def get_cvar(arr, alpha=0.05, differences=False, drawdown=False):
     return cvar
 
 if __name__ == '__main__':
-    data_path = sys.argv[1]
-    episode_rewards = get_episode_rewards(data_path)
-    iqr = get_iqr(np.copy(episode_rewards), True, 32)
-    print('IQR:', iqr)
-    cvar = get_cvar(np.copy(episode_rewards), 0.05, True, False)
-    print('CVAR (diff):', cvar)
-    cvar = get_cvar(np.copy(episode_rewards), 0.05, False, True)
-    print('CVAR (draw):', cvar)
+    for exp in ['a2c', 'apex', 'dqn', 'impala']:
+        exp_path = 'cartpole/' + exp
+        for (root, dirs, files) in os.walk(exp_path):
+            if 'checkpoint' not in root and exp.upper() in root:
+                data_path = root + '/progress.csv'
+                if '=tf2_' in data_path: framework = 'tf2'
+                elif '=tfe_' in data_path: framework = 'tfe'
+                elif '=tf_' in data_path: framework = 'tf'
+                elif '=torch_' in data_path: framework = 'torch'
+                print('--------------- ' + exp + ' ' + framework + ' ---------------')
+                episode_rewards = get_episode_rewards(data_path)
+                iqr_val = get_iqr(np.copy(episode_rewards), True, 32)
+                print('IQR:', iqr_val)
+                cvar = get_cvar(np.copy(episode_rewards), 0.05, True, False)
+                print('CVAR (diff):', cvar)
+                cvar = get_cvar(np.copy(episode_rewards), 0.05, False, True)
+                print('CVAR (draw):', cvar)
