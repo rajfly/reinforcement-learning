@@ -85,7 +85,7 @@ if __name__ == '__main__':
     tf2_exp_times = []
     torch_exp_times = []
 
-    for exp in tqdm(['a2c', 'apex', 'dqn', 'impala', 'ppo', 'appo', 'pg', 'ars']):
+    for exp in tqdm(['a2c', 'apex', 'dqn', 'impala', 'ppo', 'appo', 'pg', 'ars', 'sac']):
         exp_iqr_val = []
         exp_cvar_diff_val = []
         exp_path = 'cartpole/' + exp
