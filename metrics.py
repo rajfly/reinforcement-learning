@@ -5,23 +5,26 @@ from tqdm import tqdm
 from scipy.stats import iqr, scoreatpercentile
 import matplotlib.pyplot as plt
 
-# returns rewards, timesteps and time for a particular training run
+# returns rewards, timesteps, time and cpu util for a particular training run
 def get_episode_info(path):
     df = pd.read_csv(path)
 
     df['episode_reward_mean'] = df['episode_reward_mean'].astype(float)
     df['timesteps_total'] = df['timesteps_total'].astype(float)
     df['time_total_s'] = df['time_total_s'].astype(float)
+    df['perf/cpu_util_percent'] = df['perf/cpu_util_percent'].astype(float)
 
     df = df[df['episode_reward_mean'].notna()]
     df = df[df['timesteps_total'].notna()]
     df = df[df['time_total_s'].notna()]
+    df = df[df['perf/cpu_util_percent'].notna()]
 
     episode_reward_mean = df['episode_reward_mean'].to_numpy()
     timesteps_total = df['timesteps_total'].to_numpy()
     time_total_s = df['time_total_s'].to_numpy()
+    cpu_util_percent = df['perf/cpu_util_percent'].to_numpy()
     
-    return episode_reward_mean, timesteps_total, time_total_s
+    return episode_reward_mean, timesteps_total, time_total_s, cpu_util_percent
 
 # returns batches from numpy array
 def get_batches(arr, batch_size):
@@ -85,6 +88,11 @@ if __name__ == '__main__':
     tf2_exp_times = []
     torch_exp_times = []
 
+    tf_cpu_utils = []
+    tfe_cpu_utils = []
+    tf2_cpu_utils = []
+    torch_cpu_utils = []
+
     for exp in tqdm(['a2c', 'apex', 'dqn', 'impala', 'ppo', 'appo', 'pg', 'ars', 'sac']):
         exp_iqr_val = []
         exp_cvar_diff_val = []
@@ -94,7 +102,7 @@ if __name__ == '__main__':
         for (root, dirs, files) in os.walk(exp_path):
             if 'checkpoint' not in root and exp.upper() in root:
                 data_path = root + '/progress.csv'
-                episode_rewards, episode_timesteps, episode_times = get_episode_info(data_path)
+                episode_rewards, episode_timesteps, episode_times, episode_cpu_utils = get_episode_info(data_path)
                 iqr_val = get_iqr(np.copy(episode_rewards), np.copy(episode_timesteps), True, 10)
                 cvar_diff = get_cvar(np.copy(episode_rewards), np.copy(episode_timesteps), 0.05, True, False)
                 exp_total_time = episode_times[-1]
@@ -102,15 +110,19 @@ if __name__ == '__main__':
                 if '=tf2_' in data_path:
                     framework = 'tf2'
                     tf2_exp_times.append(exp_total_time)
+                    tf2_cpu_utils.append(np.mean(episode_cpu_utils))
                 elif '=tfe_' in data_path:
                     framework = 'tfe'
                     tfe_exp_times.append(exp_total_time)
+                    tfe_cpu_utils.append(np.mean(episode_cpu_utils))
                 elif '=tf_' in data_path:
                     framework = 'tf'
                     tf_exp_times.append(exp_total_time)
+                    tf_cpu_utils.append(np.mean(episode_cpu_utils))
                 elif '=torch_' in data_path:
                     framework = 'torch'
                     torch_exp_times.append(exp_total_time)
+                    torch_cpu_utils.append(np.mean(episode_cpu_utils))
                 
                 exp_iqr_val.append((iqr_val, framework))
                 exp_cvar_diff_val.append((cvar_diff, framework))
@@ -179,4 +191,21 @@ if __name__ == '__main__':
     plt.ylabel('Hours')
     plt.title('Average Time')
     plt.savefig('figures/avg_time.png', format='png', bbox_inches="tight")
+    plt.clf()
+
+    # plot average cpu util figure
+    avg_cpu_fig_data = {
+        'TF': np.mean(tf_cpu_utils),
+        'TFE': np.mean(tfe_cpu_utils),
+        'TF2': np.mean(tf2_cpu_utils),
+        'TORCH': np.mean(torch_cpu_utils)}
+    
+    plt.bar(
+        list(avg_cpu_fig_data.keys()),
+        list(avg_cpu_fig_data.values()),
+        color=('#8e98a3', '#12b5cb', '#e52592', '#f9ab00'))
+    
+    plt.ylabel('Percentage')
+    plt.title('Average CPU Utilisation')
+    plt.savefig('figures/avg_cpu_util.png', format='png', bbox_inches="tight")
     plt.clf()
