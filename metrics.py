@@ -8,12 +8,19 @@ import matplotlib.pyplot as plt
 # returns rewards, timesteps and time for a particular training run
 def get_episode_info(path):
     df = pd.read_csv(path)
-    df = df[df['episode_reward_mean'].astype(float).notna()]
-    df = df[df['timesteps_total'].astype(float).notna()]
-    df = df[df['time_total_s'].astype(float).notna()]
-    episode_reward_mean = df['episode_reward_mean'].astype(float).to_numpy()
-    timesteps_total = df['timesteps_total'].astype(float).to_numpy()
-    time_total_s = df['time_total_s'].astype(float).to_numpy()
+
+    df['episode_reward_mean'] = df['episode_reward_mean'].astype(float)
+    df['timesteps_total'] = df['timesteps_total'].astype(float)
+    df['time_total_s'] = df['time_total_s'].astype(float)
+
+    df = df[df['episode_reward_mean'].notna()]
+    df = df[df['timesteps_total'].notna()]
+    df = df[df['time_total_s'].notna()]
+
+    episode_reward_mean = df['episode_reward_mean'].to_numpy()
+    timesteps_total = df['timesteps_total'].to_numpy()
+    time_total_s = df['time_total_s'].to_numpy()
+    
     return episode_reward_mean, timesteps_total, time_total_s
 
 # returns batches from numpy array
