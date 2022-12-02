@@ -41,17 +41,19 @@ def get_iqr(rewards, timesteps, detrend=False, window_size=None):
         return np.mean(batch_iqr / norm)
 
 # returns the conditional value at risk (cvar) of an array
-def get_cvar(arr, arr2, alpha=0.05, differences=False, drawdown=False):
-    arr = arr / get_normalize_range(arr)
+def get_cvar(rewards, timesteps, alpha=0.05, differences=False, drawdown=False):
+    rewards = rewards / get_normalize_range(rewards)
     if differences:
-        arr = np.diff(arr)
+        rewards = np.diff(rewards)
+        timesteps = np.diff(timesteps)
+        rewards = np.true_divide(rewards, timesteps)
     elif drawdown:
-        peaks = np.maximum.accumulate(arr)
-        arr = peaks - arr
+        peaks = np.maximum.accumulate(rewards)
+        rewards = peaks - rewards
     else:
         pass
-    risk_val = scoreatpercentile(arr, 100 * alpha)
-    cvar = arr[arr <= risk_val].mean()
+    risk_val = scoreatpercentile(rewards, 100 * alpha)
+    cvar = rewards[rewards <= risk_val].mean()
     return cvar
 
 if __name__ == '__main__':
@@ -80,25 +82,25 @@ if __name__ == '__main__':
                 elif '=torch_' in data_path: framework = 'torch'
                 episode_rewards, episode_timesteps = get_episode_info(data_path)
                 iqr_val = get_iqr(np.copy(episode_rewards), np.copy(episode_timesteps), True, 10)
-                # cvar_diff = get_cvar(np.copy(episode_rewards), np.copy(episode_timesteps), 0.05, True, False)
+                cvar_diff = get_cvar(np.copy(episode_rewards), np.copy(episode_timesteps), 0.05, True, False)
                 # cvar_draw = get_cvar(np.copy(episode_rewards), np.copy(episode_timesteps), 0.05, False, True)
                 exp_iqr_val.append((iqr_val, framework))
-                # exp_cvar_diff_val.append((cvar_diff, framework))
+                exp_cvar_diff_val.append((cvar_diff, framework))
         
         # calculate rankings for iqr and cvar
         exp_iqr_val.sort(key=lambda x:x[0])
-        # exp_cvar_diff_val.sort(key=lambda x:x[0], reverse=True)
+        exp_cvar_diff_val.sort(key=lambda x:x[0], reverse=True)
         for idx, x in enumerate(exp_iqr_val):
             if x[1] == 'tf2': tf2_iqr_rankings.append(idx+1)
             elif x[1] == 'tfe': tfe_iqr_rankings.append(idx+1)
             elif x[1] == 'tf': tf_iqr_rankings.append(idx+1)
             elif x[1] == 'torch': torch_iqr_rankings.append(idx+1)
 
-        # for idx, x in enumerate(exp_cvar_diff_val):
-        #     if x[1] == 'tf2': tf2_cvar_diff_rankings.append(idx+1)
-        #     elif x[1] == 'tfe': tfe_cvar_diff_rankings.append(idx+1)
-        #     elif x[1] == 'tf': tf_cvar_diff_rankings.append(idx+1)
-        #     elif x[1] == 'torch': torch_cvar_diff_rankings.append(idx+1)
+        for idx, x in enumerate(exp_cvar_diff_val):
+            if x[1] == 'tf2': tf2_cvar_diff_rankings.append(idx+1)
+            elif x[1] == 'tfe': tfe_cvar_diff_rankings.append(idx+1)
+            elif x[1] == 'tf': tf_cvar_diff_rankings.append(idx+1)
+            elif x[1] == 'torch': torch_cvar_diff_rankings.append(idx+1)
 
     # plot iqr figure
     iqr_fig_data = {
@@ -118,18 +120,18 @@ if __name__ == '__main__':
     plt.clf()
 
     # plot cvar (diff) figure
-    # cvar_diff_fig_data = {
-    #     'TF': np.mean(tf_cvar_diff_rankings),
-    #     'TFE': np.mean(tfe_cvar_diff_rankings),
-    #     'TF2': np.mean(tf2_cvar_diff_rankings),
-    #     'TORCH': np.mean(torch_cvar_diff_rankings)}
+    cvar_diff_fig_data = {
+        'TF': np.mean(tf_cvar_diff_rankings),
+        'TFE': np.mean(tfe_cvar_diff_rankings),
+        'TF2': np.mean(tf2_cvar_diff_rankings),
+        'TORCH': np.mean(torch_cvar_diff_rankings)}
     
-    # plt.bar(
-    #     list(cvar_diff_fig_data.keys()),
-    #     list(cvar_diff_fig_data.values()),
-    #     color=('#8e98a3', '#12b5cb', '#e52592', '#f9ab00'))
+    plt.bar(
+        list(cvar_diff_fig_data.keys()),
+        list(cvar_diff_fig_data.values()),
+        color=('#8e98a3', '#12b5cb', '#e52592', '#f9ab00'))
     
-    # plt.ylabel('Mean Rank')
-    # plt.title('Short Term Risk Across Time')
-    # plt.savefig('figures/cvar_diff.png', format='png', bbox_inches="tight")
-    # plt.clf()
+    plt.ylabel('Mean Rank')
+    plt.title('Short Term Risk Across Time')
+    plt.savefig('figures/cvar_diff.png', format='png', bbox_inches="tight")
+    plt.clf()
