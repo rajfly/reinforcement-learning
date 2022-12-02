@@ -155,7 +155,7 @@ if __name__ == '__main__':
         color=('#8e98a3', '#12b5cb', '#e52592', '#f9ab00'))
     
     plt.ylabel('Mean Rank')
-    plt.title('Dispersion Across Time')
+    # plt.title('Dispersion Across Time')
     plt.savefig('figures/iqr.png', format='png', bbox_inches="tight")
     plt.clf()
 
@@ -172,7 +172,7 @@ if __name__ == '__main__':
         color=('#8e98a3', '#12b5cb', '#e52592', '#f9ab00'))
     
     plt.ylabel('Mean Rank')
-    plt.title('Short Term Risk Across Time')
+    # plt.title('Short Term Risk Across Time')
     plt.savefig('figures/cvar_diff.png', format='png', bbox_inches="tight")
     plt.clf()
 
@@ -189,7 +189,7 @@ if __name__ == '__main__':
         color=('#8e98a3', '#12b5cb', '#e52592', '#f9ab00'))
     
     plt.ylabel('Hours')
-    plt.title('Average Time')
+    # plt.title('Average Time')
     plt.savefig('figures/avg_time.png', format='png', bbox_inches="tight")
     plt.clf()
 
@@ -206,6 +206,6 @@ if __name__ == '__main__':
         color=('#8e98a3', '#12b5cb', '#e52592', '#f9ab00'))
     
     plt.ylabel('Percentage')
-    plt.title('Average CPU Utilisation')
+    # plt.title('Average CPU Utilisation')
     plt.savefig('figures/avg_cpu_util.png', format='png', bbox_inches="tight")
     plt.clf()
