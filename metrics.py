@@ -1,7 +1,7 @@
 import os
 import numpy as np
 import pandas as pd
-from ast import literal_eval
+from tqdm import tqdm
 from scipy.stats import iqr, scoreatpercentile
 import matplotlib.pyplot as plt
 
@@ -67,7 +67,7 @@ if __name__ == '__main__':
     tf2_cvar_diff_rankings = []
     torch_cvar_diff_rankings = []
 
-    for exp in ['a2c', 'apex', 'dqn', 'impala', 'ppo', 'appo', 'pg', 'arc']:
+    for exp in tqdm(['a2c', 'apex', 'dqn', 'impala', 'ppo', 'appo', 'pg', 'arc']):
         exp_iqr_val = []
         exp_cvar_diff_val = []
         exp_path = 'cartpole/' + exp
