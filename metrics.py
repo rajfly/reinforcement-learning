@@ -5,10 +5,16 @@ from tqdm import tqdm
 from scipy.stats import iqr, scoreatpercentile
 import matplotlib.pyplot as plt
 
-# returns rewards and timesteps for a particular training run
+# returns rewards, timesteps and time for a particular training run
 def get_episode_info(path):
     df = pd.read_csv(path)
-    return df['episode_reward_mean'].astype(float).to_numpy(), df['timesteps_total'].astype(float).to_numpy()
+    df = df[df['episode_reward_mean'].astype(float).notna()]
+    df = df[df['timesteps_total'].astype(float).notna()]
+    df = df[df['time_total_s'].astype(float).notna()]
+    episode_reward_mean = df['episode_reward_mean'].astype(float).to_numpy()
+    timesteps_total = df['timesteps_total'].astype(float).to_numpy()
+    time_total_s = df['time_total_s'].astype(float).to_numpy()
+    return episode_reward_mean, timesteps_total, time_total_s
 
 # returns batches from numpy array
 def get_batches(arr, batch_size):
@@ -67,7 +73,7 @@ if __name__ == '__main__':
     tf2_cvar_diff_rankings = []
     torch_cvar_diff_rankings = []
 
-    for exp in tqdm(['a2c', 'apex', 'dqn', 'impala', 'ppo', 'appo', 'pg', 'arc']):
+    for exp in tqdm(['a2c', 'apex', 'dqn', 'impala', 'ppo', 'appo', 'pg', 'ars']):
         exp_iqr_val = []
         exp_cvar_diff_val = []
         exp_path = 'cartpole/' + exp
@@ -80,9 +86,10 @@ if __name__ == '__main__':
                 elif '=tfe_' in data_path: framework = 'tfe'
                 elif '=tf_' in data_path: framework = 'tf'
                 elif '=torch_' in data_path: framework = 'torch'
-                episode_rewards, episode_timesteps = get_episode_info(data_path)
+                episode_rewards, episode_timesteps, episode_times = get_episode_info(data_path)
                 iqr_val = get_iqr(np.copy(episode_rewards), np.copy(episode_timesteps), True, 10)
                 cvar_diff = get_cvar(np.copy(episode_rewards), np.copy(episode_timesteps), 0.05, True, False)
+                episode_total_time = episode_times[-1]
                 exp_iqr_val.append((iqr_val, framework))
                 exp_cvar_diff_val.append((cvar_diff, framework))
         
