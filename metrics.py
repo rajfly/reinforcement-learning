@@ -80,6 +80,11 @@ if __name__ == '__main__':
     tf2_cvar_diff_rankings = []
     torch_cvar_diff_rankings = []
 
+    tf_exp_times = []
+    tfe_exp_times = []
+    tf2_exp_times = []
+    torch_exp_times = []
+
     for exp in tqdm(['a2c', 'apex', 'dqn', 'impala', 'ppo', 'appo', 'pg', 'ars']):
         exp_iqr_val = []
         exp_cvar_diff_val = []
@@ -89,14 +94,24 @@ if __name__ == '__main__':
         for (root, dirs, files) in os.walk(exp_path):
             if 'checkpoint' not in root and exp.upper() in root:
                 data_path = root + '/progress.csv'
-                if '=tf2_' in data_path: framework = 'tf2'
-                elif '=tfe_' in data_path: framework = 'tfe'
-                elif '=tf_' in data_path: framework = 'tf'
-                elif '=torch_' in data_path: framework = 'torch'
                 episode_rewards, episode_timesteps, episode_times = get_episode_info(data_path)
                 iqr_val = get_iqr(np.copy(episode_rewards), np.copy(episode_timesteps), True, 10)
                 cvar_diff = get_cvar(np.copy(episode_rewards), np.copy(episode_timesteps), 0.05, True, False)
-                episode_total_time = episode_times[-1]
+                exp_total_time = episode_times[-1]
+
+                if '=tf2_' in data_path:
+                    framework = 'tf2'
+                    tf2_exp_times.append(exp_total_time)
+                elif '=tfe_' in data_path:
+                    framework = 'tfe'
+                    tfe_exp_times.append(exp_total_time)
+                elif '=tf_' in data_path:
+                    framework = 'tf'
+                    tf_exp_times.append(exp_total_time)
+                elif '=torch_' in data_path:
+                    framework = 'torch'
+                    torch_exp_times.append(exp_total_time)
+                
                 exp_iqr_val.append((iqr_val, framework))
                 exp_cvar_diff_val.append((cvar_diff, framework))
         
@@ -147,4 +162,21 @@ if __name__ == '__main__':
     plt.ylabel('Mean Rank')
     plt.title('Short Term Risk Across Time')
     plt.savefig('figures/cvar_diff.png', format='png', bbox_inches="tight")
+    plt.clf()
+
+    # plot average time figure
+    avg_time_fig_data = {
+        'TF': np.mean(tf_exp_times)/60/60,
+        'TFE': np.mean(tfe_exp_times)/60/60,
+        'TF2': np.mean(tf2_exp_times)/60/60,
+        'TORCH': np.mean(torch_exp_times)/60/60}
+    
+    plt.bar(
+        list(avg_time_fig_data.keys()),
+        list(avg_time_fig_data.values()),
+        color=('#8e98a3', '#12b5cb', '#e52592', '#f9ab00'))
+    
+    plt.ylabel('Hours')
+    plt.title('Average Time')
+    plt.savefig('figures/avg_time.png', format='png', bbox_inches="tight")
     plt.clf()
