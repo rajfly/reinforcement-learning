@@ -83,7 +83,6 @@ if __name__ == '__main__':
                 episode_rewards, episode_timesteps = get_episode_info(data_path)
                 iqr_val = get_iqr(np.copy(episode_rewards), np.copy(episode_timesteps), True, 10)
                 cvar_diff = get_cvar(np.copy(episode_rewards), np.copy(episode_timesteps), 0.05, True, False)
-                # cvar_draw = get_cvar(np.copy(episode_rewards), np.copy(episode_timesteps), 0.05, False, True)
                 exp_iqr_val.append((iqr_val, framework))
                 exp_cvar_diff_val.append((cvar_diff, framework))
         
