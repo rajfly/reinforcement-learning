@@ -62,6 +62,11 @@ nohup rllib train -f config/cartpole/a2c.yaml &
 tensorboard --logdir=cartpole 
 ```
 
+### Plot Metric Figures
+```bash
+python metrics.py
+```
+
 ## Dev Utility Commands
 ```bash
 # create and export conda env
