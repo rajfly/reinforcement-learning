@@ -98,7 +98,7 @@ if __name__ == '__main__':
         exp_cvar_diff_val = []
         exp_path = 'cartpole/' + exp
 
-        # get data from training files and calculate iqr, cvar
+        # get data from training files and calculate iqr, cvar, time and cpu metrics
         for (root, dirs, files) in os.walk(exp_path):
             if 'checkpoint' not in root and exp.upper() in root:
                 data_path = root + '/progress.csv'
@@ -106,7 +106,8 @@ if __name__ == '__main__':
                 iqr_val = get_iqr(np.copy(episode_rewards), np.copy(episode_timesteps), True, 10)
                 cvar_diff = get_cvar(np.copy(episode_rewards), np.copy(episode_timesteps), 0.05, True, False)
                 exp_total_time = episode_times[-1]
-
+                
+                # calculate time and cpu metrics 
                 if '=tf2_' in data_path:
                     framework = 'tf2'
                     tf2_exp_times.append(exp_total_time)
