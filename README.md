@@ -71,6 +71,7 @@ tensorboard --logdir=cartpole
 ```
 
 ### Step 5: Plot reliability and efficiency metric figures after training
+- Figures will be stored in reinforcement-learning/figures
 - Implementation of comparison metrics are in metrics.py
 ```bash
 python metrics.py
