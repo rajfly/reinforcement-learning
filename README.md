@@ -3,7 +3,9 @@ Testing Reinforcement Learning Algorithms
 
 ## User Guide
 
-### Set Up Environment
+### Step 1: Set up environment
+- Create a conda environment named rllib and install rllib along with tensorflow and pytorch frameworks
+- Refer to rllib's website/documentation if any problems are faced
 ```bash
 conda create -n rllib python=3.8
 conda activate rllib
@@ -19,7 +21,8 @@ conda install tensorflow=2.10.0
 pip install tensorflow-probability
 ```
 
-### Configure Training
+### Step 2: Configure training config files to match your cpu/gpu
+- All config files are located in config/cartpole
 ```yaml
 # required fields to modify: local_dir, num_gpus, num_workers
 # local_dir: modify '~/projects/' to point to the directory where this repo is located
@@ -51,23 +54,28 @@ a2c:
         - torch
 ```
 
-### Start Training
+### Step 3: Start training
+- Training outputs will be stored in reinforcement-learning/cartpole
 ```bash
+# run each algorithm individually
 # see nohup.out for train output
-nohup rllib train -f config/cartpole/a2c.yaml &
+nohup ./run.sh &
 ```
 
-### View Training Graphs
+### Step 4: View training graphs
+- You can view training graphs/curves in real time with tensorboard
+- logdir is the directory of the training outputs
 ```bash
 tensorboard --logdir=cartpole 
 ```
 
-### Plot Metric Figures
+### Step 5: Plot reliability and efficiency metric figures after training
+- Implementation of comparison metrics are in metrics.py
 ```bash
 python metrics.py
 ```
 
-## Dev Utility Commands
+## Dev utility commands (not for user)
 ```bash
 # create and export conda env
 conda env create -f environment.yml
