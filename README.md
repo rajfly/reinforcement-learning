@@ -23,6 +23,7 @@ pip install tensorflow-probability
 
 ### Step 2: Configure training config files to match your cpu/gpu
 - All config files are located in config/cartpole
+- This ensures the same input for each framework
 ```yaml
 # required fields to modify: local_dir, num_gpus, num_workers
 # local_dir: modify '~/projects/' to point to the directory where this repo is located
